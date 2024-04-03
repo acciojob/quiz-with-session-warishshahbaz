@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-  const questionsList = document.getElementById("questionsList");
+  const questionsList = document.getElementById("questions");
   const quizForm = document.getElementById("quizForm");
   const submitBtn = document.getElementById("submitBtn");
   const scoreDisplay = document.getElementById("scoreDisplay");
