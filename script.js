@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // Questions data
   const questions = [
     {
-      question: "What is the capital of France?",
+      question: 'What is the capital of France?',
       options: ["Paris", "London", "Berlin", "Rome"],
       correctAnswer: "Paris"
     },
