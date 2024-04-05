@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Define the quiz questions and options
   const quizQuestions = [
     {
-      question: 'What is the capital of France?',
+      question:'What is the capital of France?',
       options: ['London', 'Paris', 'Berlin', 'Madrid'],
       answer: 'Paris'
     },
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const questionDiv = document.createElement('div');
       questionDiv.classList.add('question');
       questionDiv.innerHTML = `
-        <p>${index + 1}. ${question.question}</p>
+        <p>${question.question}</p>
         <ul>
           ${question.options.map((option, optionIndex) => `
             <li>
