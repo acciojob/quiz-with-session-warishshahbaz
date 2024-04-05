@@ -1,79 +1,92 @@
-document.addEventListener("DOMContentLoaded", function() {
-  const questionsContainer = document.getElementById("questions");
-  const submitButton = document.getElementById("submit");
-  const scoreDisplay = document.getElementById("score");
+document.addEventListener('DOMContentLoaded', function() {
+  const questionsContainer = document.getElementById('questions');
+  const submitButton = document.getElementById('submit');
+  const scoreDisplay = document.getElementById('score');
 
-  // Questions data
-  const questions = [
+  // Define the quiz questions and options
+  const quizQuestions = [
     {
-      question:'What is the capital of France?',
-      options: ["Paris", "London", "Berlin", "Rome"],
-      correctAnswer: "Paris"
+      question: 'What is the capital of France?',
+      options: ['London', 'Paris', 'Berlin', 'Madrid'],
+      answer: 'Paris'
     },
     {
-      question: "What is the largest planet in our solar system?",
-      options: ["Mars", "Venus", "Jupiter", "Saturn"],
-      correctAnswer: "Jupiter"
+      question: 'What is the largest mammal?',
+      options: ['Elephant', 'Whale', 'Giraffe', 'Horse'],
+      answer: 'Whale'
     },
     {
-      question: "Who wrote 'Romeo and Juliet'?",
-      options: ["William Shakespeare", "Jane Austen", "Charles Dickens", "Mark Twain"],
-      correctAnswer: "William Shakespeare"
+      question: 'Which planet is known as the Red Planet?',
+      options: ['Mars', 'Venus', 'Jupiter', 'Saturn'],
+      answer: 'Mars'
     },
     {
-      question: "What is the chemical symbol for water?",
-      options: ["H2O", "CO2", "O2", "NaCl"],
-      correctAnswer: "H2O"
+      question: 'Who painted the Mona Lisa?',
+      options: ['Vincent van Gogh', 'Pablo Picasso', 'Leonardo da Vinci', 'Michelangelo'],
+      answer: 'Leonardo da Vinci'
     },
     {
-      question: "What is the powerhouse of the cell?",
-      options: ["Nucleus", "Mitochondria", "Ribosome", "Endoplasmic reticulum"],
-      correctAnswer: "Mitochondria"
+      question: 'Which is the tallest mountain in the world?',
+      options: ['Mount Everest', 'K2', 'Kangchenjunga', 'Lhotse'],
+      answer: 'Mount Everest'
     }
   ];
 
-  // Initialize quiz
-  function initQuiz() {
-    let progress = sessionStorage.getItem("progress");
-    if (!progress) {
-      progress = new Array(questions.length).fill(null);
-    } else {
-      progress = JSON.parse(progress);
-    }
-    
-    // Display questions
-    questionsContainer.innerHTML = "";
-    questions.forEach((q, index) => {
-      const questionDiv = document.createElement("div");
+  // Function to render the quiz questions
+  function renderQuestions() {
+    const savedProgress = JSON.parse(sessionStorage.getItem('progress')) || [];
+    questionsContainer.innerHTML = '';
+    quizQuestions.forEach((question, index) => {
+      const questionDiv = document.createElement('div');
+      questionDiv.classList.add('question');
       questionDiv.innerHTML = `
-        <p>${q.question}</p>
-        ${q.options.map((option, i) => `
-          <input type="radio" id="q${index}_option${i}" name="q${index}" value="${option}" ${progress[index] === option ? 'checked' : ''}>
-          <label for="q${index}_option${i}">${option}</label>
-        `).join('')}
+        <p>${index + 1}. ${question.question}</p>
+        <ul>
+          ${question.options.map((option, optionIndex) => `
+            <li>
+              <input type="radio" id="q${index}-option${optionIndex}" name="q${index}" value="${option}" ${savedProgress[index] === option ? 'checked' : ''}>
+              <label for="q${index}-option${optionIndex}">${option}</label>
+            </li>
+          `).join('')}
+        </ul>
       `;
       questionsContainer.appendChild(questionDiv);
     });
   }
 
-  // Handle submit button click
-  submitButton.addEventListener("click", function() {
-    const selectedOptions = Array.from(document.querySelectorAll('input[type="radio"]:checked')).map(input => input.value);
-    const score = selectedOptions.reduce((acc, option, index) => {
-      if (option === questions[index].correctAnswer) {
-        return acc + 1;
-      } else {
-        return acc;
+  // Function to calculate and display the score
+  function calculateScore() {
+    const selectedOptions = Array.from(document.querySelectorAll('input[type="radio"]:checked'));
+    const score = selectedOptions.reduce((totalScore, option) => {
+      const questionIndex = parseInt(option.name.slice(1));
+      const selectedAnswer = option.value;
+      if (selectedAnswer === quizQuestions[questionIndex].answer) {
+        return totalScore + 1;
       }
+      return totalScore;
     }, 0);
+    scoreDisplay.textContent = `Your score is ${score} out of 5.`;
+    localStorage.setItem('score', score);
+  }
 
-    // Display score
-    scoreDisplay.textContent = `Your score is ${score} out of ${questions.length}`;
-
-    // Save score in local storage
-    localStorage.setItem("score", score);
+  // Event listener for submit button
+  submitButton.addEventListener('click', function() {
+    calculateScore();
   });
 
-  // Initialize quiz
-  initQuiz();
+  // Event listener for radio button change
+  questionsContainer.addEventListener('change', function(event) {
+    const target = event.target;
+    if (target.tagName === 'INPUT' && target.type === 'radio') {
+      const progress = [];
+      const radioButtons = document.querySelectorAll('input[type="radio"]:checked');
+      radioButtons.forEach(button => {
+        progress.push(button.value);
+      });
+      sessionStorage.setItem('progress', JSON.stringify(progress));
+    }
+  });
+
+  // Initial rendering of questions
+  renderQuestions();
 });
